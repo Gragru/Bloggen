@@ -1,0 +1,70 @@
+﻿@page
+@model IndexModel
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@{
+    ViewData["Title"] = "Home page";
+    var user = await UserManager.GetUserAsync(User);
+}
+
+<div class="text-center">
+    <h1 class="display-4">Mickes blogg</h1>
+</div>
+
+<div class="row">
+    @if(Model.Blogs != null)
+    {
+        @foreach(var blog in Model.Blogs)
+        {
+            <div class="card m-2" style="width: 18rem">
+                <img class="card-img-top" src="~/img/@blog.Image">
+                <div class="card-body">
+                    <h5 class="card-title">@blog.Header</h5>
+                    <p class="card-text">@blog.Text</p>
+                    @if(user != null && user.Id == blog.UserId)
+                    {
+                        <a asp-route-deleteid="@blog.Id" class="btn btn-primary">Ta bort</a>
+                    }
+
+                </div>
+                <p class="card-footer">@blog.Date</p>
+
+            </div>
+        }
+    }
+
+
+
+
+</div>
+
+
+@if(SignInManager.IsSignedIn(User))
+{
+    <p>Du är inloggad som @User.Identity.Name</p>
+
+    <form method="post" enctype="multipart/form-data">
+        <label asp-for="Blog.Header" class="form-label"></label>
+        <input asp-for="Blog.Header" class="form-control"/>
+
+        <label asp-for="Blog.Text" class="form-label"></label>
+        <textarea asp-for="Blog.Text" class="form-control" cols="40" rows="5"></textarea>
+
+        <label asp-for="Blog.Image" class="form-label"></label>
+        <input type="file" class="form-control" name="UploadedImage">
+
+        <input type="submit" class="btn btn-success" value="Spara inlägg">
+</form>
+
+
+
+}
+else
+{
+    <div class="alert alert-danger">Du är INTE inloggad!</div>
+}
+
+
+
+
+
